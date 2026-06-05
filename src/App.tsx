@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppLayout, Stack, Field, Chip, useLocalStorage, type Meta } from './ui';
 import { ask, hasKey } from './lib/ai';
+import { Pipeline } from './lib/flow';
+
+const PIPE = ['기분·스트레스 상태 분석', '회복 습관 데이터 매칭', '맞춤 루틴·호흡 처방', '확언·성찰 질문 생성'];
 import { useReadAloud } from './lib/tts';
 
 const M: Meta = {
@@ -176,13 +179,13 @@ function Feature() {
   const [time, setTime] = useState(15);
   const [goals, setGoals] = useState<string[]>(['anxiety']);
   const [plan, setPlan] = useState<Plan | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [gen, setGen] = useState(false);
   const [done, setDone] = useState<Record<number, boolean>>({});
   const [log, setLog] = useLocalStorage<Check[]>('resilience.log', []);
   const tts = useReadAloud();
 
   const toggle = (k: string) => setGoals(goals.includes(k) ? goals.filter((x) => x !== k) : [...goals, k]);
-  const run = async () => { setLoading(true); setDone({}); setPlan(await getPlan(mood, stress, time, goals)); setLoading(false); requestAnimationFrame(() => document.getElementById('plan-top')?.scrollIntoView({ behavior: 'smooth' })); };
+  const run = () => { setDone({}); setGen(true); requestAnimationFrame(() => document.getElementById('plan-top')?.scrollIntoView({ behavior: 'smooth' })); };
   const checkIn = () => setLog([...log, { d: log.length, mood, stress }].slice(-60));
   const streak = log.length;
 
@@ -196,7 +199,7 @@ function Feature() {
           <Field label="회복 목표" hint="복수"><div className="chips">{GOALS.map((g) => <Chip key={g.key} active={goals.includes(g.key)} color={M.color} onClick={() => toggle(g.key)}>{g.label}</Chip>)}</div></Field>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <button className="btn" style={{ background: M.color }} disabled={loading} onClick={run}>{loading ? '🌱 루틴 짓는 중…' : '🌱 회복 루틴 받기'}</button>
+          <button className="btn" style={{ background: M.color }} disabled={gen} onClick={run}>{gen ? '🌱 루틴 짓는 중…' : '🌱 회복 루틴 받기'}</button>
           <button className="btn btn-ghost" onClick={checkIn}>📈 오늘 기분 체크인</button>
         </div>
       </div>
@@ -210,8 +213,8 @@ function Feature() {
       </div>
 
       <div id="plan-top" />
-      {loading && <div className="spinner" />}
-      {plan && !loading && (
+      {gen && <Pipeline color={M.color} icon="🌱" title="회복 루틴을 처방하는 중…" steps={PIPE} run={() => getPlan(mood, stress, time, goals)} onDone={(p) => { setPlan(p); setGen(false); }} />}
+      {plan && !gen && (
         <Stack gap={18}>
           <h2 style={{ margin: 0, fontSize: 19 }}>🌱 {plan.plan_title}</h2>
 

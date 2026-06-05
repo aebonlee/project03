@@ -13,3 +13,5 @@
 
 ## 스택
 React 18 · TypeScript · Vite · OpenAI GPT · Web Speech API · SVG · localStorage
+
+## v4 — 생성 파이프라인 단계 시각화 추가

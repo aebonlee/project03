@@ -105,3 +105,15 @@ p { line-height: 1.7; }
 .breath-meta { display: flex; flex-direction: column; gap: 8px; }
 .breath-meta strong { font-size: 16px; }
 .breath-meta span { font-size: 13px; color: var(--sub); }
+
+/* ── v4 멀티페이지: 파이프라인 / 플로우 ── */
+.flow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 4px; }
+.flow__step { padding: 8px 14px; font-size: 13px; font-weight: 700; border: 1px solid var(--border); background: var(--card); color: var(--sub); border-radius: 999px; cursor: pointer; }
+.pipe { text-align: center; }
+.pipe__spin { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin: 8px auto 4px; }
+.pipe-steps { list-style: none; margin: 0 auto; padding: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; max-width: 460px; }
+.pipe-step { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); transition: opacity .3s; }
+.pipe-step.todo { opacity: .45; }
+.pipe-step.doing { box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 24%, transparent); }
+.pipe-step__n { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 800; color: var(--sub); }
+.pipe-step__t { font-size: 14px; font-weight: 600; }
