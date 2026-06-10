@@ -100,6 +100,15 @@ const M: Meta = {
   ],
   deploy:
     'Vite 빌드(base: "./") 후 GitHub Actions(deploy.yml)가 main push 시 GitHub Pages로 자동 배포 → aebonlee.github.io/project03/',
+  scope: {
+    include: ['상태 입력 → 루틴·호흡·확언·성찰 처방', '호흡 타이머·기분 체크인·SVG 추세', 'AI 처방 + 키 없을 때 내장 템플릿 폴백'],
+    exclude: ['의료 진단·처방', '웨어러블 연동', '전문가 상담 매칭'],
+  },
+  pitch: [
+    '"매일 작은 루틴"으로 회복을 돕는 접근',
+    '호흡 타이머·기분 추세로 실천과 변화를 가시화하는 점',
+    '자기돌봄 도구이며 진단을 대체하지 않는다는 안전 메시지',
+  ],
   stack: ['React 18', 'TypeScript', 'Vite', 'OpenAI GPT', 'Web Speech API', 'SVG', 'localStorage'],
   links: [
     { label: '보건복지부 정신건강', url: 'https://www.mohw.go.kr' },
