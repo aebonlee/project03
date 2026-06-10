@@ -51,6 +51,55 @@ const M: Meta = {
     { title: 'SVG 추세 차트', body: '기분 로그를 정규화해 polyline 좌표로 변환, 외부 차트 라이브러리 없이 가벼운 스파크라인을 렌더합니다.' },
     { title: '오프라인·정적', body: '상태는 localStorage에만 저장, Web Speech API로 음성 낭독해 백엔드 없이 GitHub Pages에서 완결됩니다.' },
   ],
+  targets: ['번아웃·불안을 겪는 직장인·학생', '자기돌봄 습관을 시작하려는 사람', '매일의 기분을 기록·관리하고 싶은 사람'],
+  goals: [
+    '오늘 상태에 맞는 회복 루틴·호흡·확언을 즉시 처방한다',
+    '기분 체크인을 누적해 변화 추이를 객관화한다',
+    'API 키가 없어도 내장 루틴 템플릿으로 동작하게 한다',
+  ],
+  scenarios: [
+    '오늘의 기분·스트레스·가능 시간·목표를 고르고 회복 루틴을 받는다',
+    '호흡 타이머를 따라 하고 확언을 TTS로 들으며 실천한다',
+    '기분 체크인을 눌러 SVG 추세로 변화를 확인한다',
+  ],
+  screens: [
+    { name: '상태 입력', desc: '오늘의 기분·스트레스·가능 시간·회복 목표 선택' },
+    { name: '오늘의 루틴', desc: '시간대별 회복 루틴(이유 포함) + 완료 체크' },
+    { name: '호흡 타이머', desc: '들숨·멈춤·날숨 애니메이션 호흡 가이드' },
+    { name: '확언 · 성찰', desc: '오늘의 확언 + 성찰 질문 + TTS 낭독' },
+    { name: '기분 추적', desc: '체크인 누적 SVG 추세 그래프 + 연속일' },
+  ],
+  pipelineDetail: [
+    { step: '상태 수집', detail: '기분·스트레스·가용 시간·회복 목표를 구조화한다.' },
+    { step: '처방 합성 · 스키마 강제', detail: '근거 기반 회복 습관 가이드를 system 프롬프트로 지시하고 JSON 스키마를 고정한다.' },
+    { step: 'GPT 호출(json_object)', detail: 'json_object로 루틴·호흡·확언·성찰질문을 한 번에 수신한다.' },
+    { step: '검증 · 폴백', detail: '누락 시 내장 회복 루틴 템플릿으로 안전 처방한다.' },
+    { step: '실천', detail: '호흡 타이머 상태기계 애니메이션 + 확언 Web Speech 낭독.' },
+    { step: '기록', detail: '기분 체크인을 localStorage(resilience.log)에 누적해 SVG 추세로 시각화한다.' },
+  ],
+  promptNotes: [
+    'system 프롬프트로 근거 기반 회복 습관(수면·호흡·감사 등) 가이드와 안전 주의를 준다.',
+    '루틴·호흡(들숨/멈춤/날숨 초)·확언·성찰질문을 하나의 json_object 스키마로 강제해 한 번에 받는다.',
+    'API 키가 없으면 호출 없이 내장 회복 루틴 템플릿으로 동일 구조의 처방을 만든다.',
+  ],
+  architecture:
+    '백엔드 없는 React SPA. 공통 레이아웃·5탭은 src/ui.tsx, 코칭 기능은 src/App.tsx가 담당한다. ' +
+    'OpenAI 호출은 src/lib/ai.ts, 단계 애니메이션은 src/lib/flow.tsx, 음성 낭독은 src/lib/tts.ts가 처리하고, 기분 로그는 브라우저 localStorage에 저장한다.',
+  structure: [
+    { path: 'src/App.tsx', desc: '루틴 처방·호흡 타이머·기분 추적 + 메타(M)' },
+    { path: 'src/ui.tsx', desc: '공통 레이아웃·5탭·UI 헬퍼' },
+    { path: 'src/lib/ai.ts', desc: 'OpenAI chat 헬퍼(ask/hasKey)' },
+    { path: 'src/lib/flow.tsx', desc: '단계 진행 애니메이션 Pipeline' },
+    { path: 'src/lib/tts.ts', desc: 'Web Speech 한국어 낭독 훅' },
+    { path: 'src/index.css', desc: '테마·호흡 타이머/그래프 스타일' },
+  ],
+  dataModel: [
+    { name: 'Plan', desc: 'plan_title·routines·affirmations·breathing·reflections·weekly_goal 처방 결과' },
+    { name: 'Routine', desc: 'time·activity·why 시간대별 루틴 한 건' },
+    { name: 'Check', desc: 'd(날짜)·mood·stress 기분 체크인. localStorage "resilience.log"' },
+  ],
+  deploy:
+    'Vite 빌드(base: "./") 후 GitHub Actions(deploy.yml)가 main push 시 GitHub Pages로 자동 배포 → aebonlee.github.io/project03/',
   stack: ['React 18', 'TypeScript', 'Vite', 'OpenAI GPT', 'Web Speech API', 'SVG', 'localStorage'],
   links: [
     { label: '보건복지부 정신건강', url: 'https://www.mohw.go.kr' },
